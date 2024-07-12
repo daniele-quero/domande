@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +12,7 @@ public class RispostaUI : MonoBehaviour
     private Image _bg;
     public Risposta Risposta { get => _risposta; set => _risposta = value; }
 
+
     private void Start()
     {
         _bg = GetComponentInChildren<Image>();
@@ -18,12 +21,15 @@ public class RispostaUI : MonoBehaviour
         _toggle.onValueChanged.AddListener(Rispondi);
     }
 
-    public void Init(Risposta r)
+    public void Init(Risposta r, Action callback) => StartCoroutine(SafeInit(r, callback));
+
+    private IEnumerator SafeInit(Risposta r, Action callback)
     {
+        yield return new WaitUntil(() => r != null);
         _risposta = r;
         _testo.text = _risposta.Testo;
+        callback();
     }
-
 
     private void Rispondi(bool value)
     {
@@ -36,10 +42,8 @@ public class RispostaUI : MonoBehaviour
             }
             else
                 _bg.color = Color.red;
-
         }
         else
             _bg.color = Color.white;
     }
-
 }

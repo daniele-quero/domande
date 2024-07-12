@@ -14,11 +14,8 @@ public class DomandeParser
         var list = parsedPdf.Split("Domanda\nN° ").ToList();
         MantieniDomande(list);
         ScartaFigure(list);
-        PulisciDomandePer(list, "Domande seconda sessione 2024");
         return list;
     }
-
-    private static void PulisciDomandePer(List<string> list, string oldValue) => list.ForEach(d => d = d.Replace(oldValue, ""));
 
     private static void MantieniDomande(List<string> list) => list.RemoveAll(d => !(d.Contains("A)") && d.Contains("E)")));
     private static void ScartaFigure(List<string> list) => list.RemoveAll(d => FIGURE.Select(f => d.Contains(f)).Where(p => p = true).First());
@@ -34,8 +31,8 @@ public class DomandeParser
                     .ToList();
     }
 
-    private static string ExtractQuesito(string d) => d.Substring(d.IndexOf(ExtractNumero(d)), d.IndexOf("A)") - d.IndexOf(ExtractNumero(d)))
-                                                    .Substring(2)
+    private static string ExtractQuesito(string d) => d.Substring(d.IndexOf(ExtractNumero(d)) + ExtractNumero(d).Length, d.IndexOf("A)") - (d.IndexOf(ExtractNumero(d)) + ExtractNumero(d).Length))
+                                                    //.Substring(2)
                                                     .Trim();
 
     private static string ExtractNumero(string d) => d.Split("\n")[0];
@@ -52,15 +49,22 @@ public class DomandeParser
             int length = d.IndexOf(matches[i + 1].Value) - d.IndexOf(matches[i].Value);
             var t_ = d.Substring(d.IndexOf(matches[i].Value), length);
             risposte[i] = new Risposta(
-                    t_.Replace("\n", " "),
+                    CleanText(t_),
                     t_.Contains("A)"));
         }
 
         var t = d.Substring(d.IndexOf(matches[matches.Count - 1].Value));
+
         risposte[matches.Count - 1] = new Risposta(
-                    t.Replace("\n", " "),
+                    CleanText(t),
                     t.Contains("A)"));
 
         return risposte;
+    }
+
+    private static string CleanText(string text)
+    {
+        string pattern = @"Pagina\s[0-9]{1,3}\sdi\s[0-9]{3}";
+        return Regex.Replace(text, pattern, "").Replace("\n", " ").Replace("Domande seconda sessione 2024", "");
     }
 }

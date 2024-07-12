@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,23 +7,44 @@ public class DomandaUI : MonoBehaviour
     [SerializeField] private Domanda _domanda;
     [SerializeField] private Text _quesito;
     [SerializeField] private RispostaUI[] _risposteUI;
-    [SerializeField] private Toggle[] _toggles;
-    [SerializeField] private int _n;
+    [SerializeField] private int _test;
+    private int _evtCounter = 0;
 
-    public Domanda Domanda { get => _domanda; set => _domanda = value; }
-
-    void Start()
+    public void Init(Domanda domanda, Transform parent, int test)
     {
-        _domanda = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-       PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\biologia.pdf")))[_n];
+        _test = test;
+        _domanda = domanda;
         _quesito.text = _domanda.N + " - " + _domanda.Quesito;
 
         _risposteUI = GetComponentsInChildren<RispostaUI>();
         for (int i = 0; i < _domanda.Risposte.Length; i++)
         {
-            _risposteUI[i].Init(_domanda.Risposte[i]);
+            _risposteUI[i].Init(_domanda.Risposte[i], NascondiDomanda);
         }
+
+        transform.SetParent(parent);
     }
 
 
+    private IEnumerator SafeInit(Domanda domanda)
+    {
+
+        yield return new WaitUntil(() => domanda?.Risposte != null);
+        _domanda = domanda;
+        _quesito.text = _domanda.N + " - " + _domanda.Quesito;
+        _risposteUI = GetComponentsInChildren<RispostaUI>();
+        for (int i = 0; i < _domanda.Risposte.Length; i++)
+        {
+            _risposteUI[i].Init(_domanda.Risposte[i], NascondiDomanda);
+        }
+    }
+
+    private void NascondiDomanda()
+    {
+        _evtCounter++;
+        if (_evtCounter == 5 && _test > 0)
+        {
+            gameObject.SetActive(false);
+        }
+    }
 }
