@@ -7,13 +7,7 @@ using UnityEngine.UI;
 
 public class DomandeManager : MonoBehaviour
 {
-    [SerializeField] private List<Domanda> _domandeBiologia;
-    [SerializeField] private List<Domanda> _domandeCompetenze;
-    [SerializeField] private List<Domanda> _domandeLogica;
 
-    [SerializeField] private int _numBiologia;
-    [SerializeField] private int _numCompetenze;
-    [SerializeField] private int _numLogica;
     [SerializeField] private int _numberOfTests;
     private int _total;
     [SerializeField] private int _currentTest;
@@ -24,11 +18,11 @@ public class DomandeManager : MonoBehaviour
     [SerializeField] private Image _cover;
     [SerializeField] private Image _loadingBar;
 
-    List<List<Domanda>> _biologiaSub = new List<List<Domanda>>();
-    List<List<Domanda>> _logicaSub = new List<List<Domanda>>();
-    List<List<Domanda>> _competenzeSub = new List<List<Domanda>>();
-    List<List<Domanda>> _tests = new List<List<Domanda>>();
-    Dictionary<int, List<GameObject>> _testsUI = new Dictionary<int, List<GameObject>>();
+    private List<List<Domanda>> _biologiaSub = new List<List<Domanda>>();
+    private List<List<Domanda>> _logicaSub = new List<List<Domanda>>();
+    private List<List<Domanda>> _competenzeSub = new List<List<Domanda>>();
+    private List<List<Domanda>> _chimicaSub = new List<List<Domanda>>();
+    private Dictionary<int, List<GameObject>> _testsUI = new Dictionary<int, List<GameObject>>();
 
 
     public static Action<int> TestCaricato;
@@ -36,18 +30,6 @@ public class DomandeManager : MonoBehaviour
 
     void Start()
     {
-
-        _domandeBiologia = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\biologia.pdf")));
-
-        _domandeCompetenze = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\competenze.pdf")));
-
-        _domandeLogica = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\logica.pdf")));
-
-        _total = _domandeBiologia.Count + _domandeCompetenze.Count + _domandeLogica.Count;
-
         FindBestDomandeDistribution();
         FillTests();
 
@@ -65,10 +47,9 @@ public class DomandeManager : MonoBehaviour
             test.AddRange(_biologiaSub[i]);
             test.AddRange(_logicaSub[i]);
             test.AddRange(_competenzeSub[i]);
+            test.AddRange(_chimicaSub[i]);
             DurstenfeldShuffler<Domanda>.shuffle(test);
             _testsUI.Add(i, test.Select(d => InitDomanda(d, i)).ToList());
-
-            _tests.Add(test);
         }
         _currentTest = 0;
     }
@@ -96,43 +77,69 @@ public class DomandeManager : MonoBehaviour
 
     private void FindBestDomandeDistribution()
     {
+        List<Domanda> domandeBiologia;
+        List<Domanda> domandeCompetenze;
+        List<Domanda> domandeLogica;
+        List<Domanda> domandeChimica;
+
+        domandeBiologia = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
+        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\biologia.pdf")));
+
+        domandeCompetenze = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
+        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\competenze.pdf")));
+
+        domandeLogica = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
+        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\logica.pdf")));
+
+        domandeChimica = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
+        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\chimica.pdf")));
+
+        _total = domandeBiologia.Count + domandeCompetenze.Count + domandeLogica.Count;
+
+        int _numBiologia;
+        int _numCompetenze;
+        int _numLogica;
+        int _numChimica;
+
         for (_numberOfTests = 22; _numberOfTests <= 60; _numberOfTests++)
         {
-            _numLogica = Mathf.RoundToInt(_domandeLogica.Count / (float)_numberOfTests);
-            _numBiologia = Mathf.RoundToInt(_domandeBiologia.Count / (float)_numberOfTests);
-            _numCompetenze = Mathf.RoundToInt(_domandeCompetenze.Count / (float)_numberOfTests);
-            Debug.Log(_numberOfTests);
-            _biologiaSub = _domandeBiologia.Select((x, i) => new { Index = i, Value = x })
+            _numLogica = Mathf.RoundToInt(domandeLogica.Count / (float)_numberOfTests);
+            _numBiologia = Mathf.RoundToInt(domandeBiologia.Count / (float)_numberOfTests);
+            _numCompetenze = Mathf.RoundToInt(domandeCompetenze.Count / (float)_numberOfTests);
+            _numChimica = Mathf.RoundToInt(domandeChimica.Count / (float)_numberOfTests);
+
+            _biologiaSub = domandeBiologia.Select((x, i) => new { Index = i, Value = x })
                    .GroupBy(x => x.Index / _numBiologia)
                    .Select(x => x.Select(v => v.Value).ToList())
                    .ToList();
 
-            _logicaSub = _domandeLogica.Select((x, i) => new { Index = i, Value = x })
+            _logicaSub = domandeLogica.Select((x, i) => new { Index = i, Value = x })
               .GroupBy(x => x.Index / _numLogica)
               .Select(x => x.Select(v => v.Value).ToList())
               .ToList();
 
-            _competenzeSub = _domandeCompetenze.Select((x, i) => new { Index = i, Value = x })
+            _competenzeSub = domandeCompetenze.Select((x, i) => new { Index = i, Value = x })
                .GroupBy(x => x.Index / _numCompetenze)
                .Select(x => x.Select(v => v.Value).ToList())
                .ToList();
 
+            _chimicaSub = domandeChimica.Select((x, i) => new { Index = i, Value = x })
+               .GroupBy(x => x.Index / _numChimica)
+               .Select(x => x.Select(v => v.Value).ToList())
+               .ToList();
 
-            if (Mathf.Max(new int[] { _biologiaSub.Count, _competenzeSub.Count, _logicaSub.Count }) - Mathf.Min(new int[] { _biologiaSub.Count, _competenzeSub.Count, _logicaSub.Count }) <= 2) break;
+            Debug.Log(string.Format("logica: {0}, biologia: {1}, competenze: {2}, chimica: {3}", _logicaSub.Count, _biologiaSub.Count, _competenzeSub.Count, _chimicaSub.Count));
+            if (BestDistrib())
+                break;
         }
 
-        _numberOfTests = Mathf.Min(new int[] { _biologiaSub.Count, _competenzeSub.Count, _logicaSub.Count });
+        _numberOfTests = Mathf.Min(new int[] { _biologiaSub.Count, _competenzeSub.Count, _logicaSub.Count, _chimicaSub.Count });
     }
 
+    private bool BestDistrib() => Mathf.Max(new int[] { _biologiaSub.Count, _competenzeSub.Count, _logicaSub.Count, _chimicaSub.Count })
+        - Mathf.Min(new int[] { _biologiaSub.Count, _competenzeSub.Count, _logicaSub.Count, _chimicaSub.Count }) <= 2;
 
-    private void SetActiveTest(int test, bool active)
-    {
-        _testsUI[test].ForEach(d => d.SetActive(active));
-        //foreach (var d in _testsUI[test])
-        //{
-        //    d.SetActive(active);
-        //}
-    }
+    private void SetActiveTest(int test, bool active) => _testsUI[test].ForEach(d => d.SetActive(active));
 
 
     public void LoadTest(float test)

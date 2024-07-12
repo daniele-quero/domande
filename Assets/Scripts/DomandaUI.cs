@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,33 +17,15 @@ public class DomandaUI : MonoBehaviour
 
         _risposteUI = GetComponentsInChildren<RispostaUI>();
         for (int i = 0; i < _domanda.Risposte.Length; i++)
-        {
             _risposteUI[i].Init(_domanda.Risposte[i], NascondiDomanda);
-        }
 
         transform.SetParent(parent);
-    }
-
-
-    private IEnumerator SafeInit(Domanda domanda)
-    {
-
-        yield return new WaitUntil(() => domanda?.Risposte != null);
-        _domanda = domanda;
-        _quesito.text = _domanda.N + " - " + _domanda.Quesito;
-        _risposteUI = GetComponentsInChildren<RispostaUI>();
-        for (int i = 0; i < _domanda.Risposte.Length; i++)
-        {
-            _risposteUI[i].Init(_domanda.Risposte[i], NascondiDomanda);
-        }
     }
 
     private void NascondiDomanda()
     {
         _evtCounter++;
         if (_evtCounter == 5 && _test > 0)
-        {
             gameObject.SetActive(false);
-        }
     }
 }

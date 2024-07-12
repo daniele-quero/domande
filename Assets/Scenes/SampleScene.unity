@@ -1054,7 +1054,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 25
+  m_ScrollSensitivity: 30
   m_Viewport: {fileID: 61095885}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 996174399}
@@ -1204,12 +1204,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd43bbad823c3d84fb412a9e26d8565d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _domandeBiologia: []
-  _domandeCompetenze: []
-  _domandeLogica: []
-  _numBiologia: 0
-  _numCompetenze: 0
-  _numLogica: 0
   _numberOfTests: 0
   _currentTest: 0
   _domandaTemplate: {fileID: 8313408285296975888, guid: 5e48405020a31bc47bd0ddfc11a1c62c, type: 3}

@@ -10,8 +10,6 @@ public class RispostaUI : MonoBehaviour
     private Text _testo;
     private Toggle _toggle;
     private Image _bg;
-    public Risposta Risposta { get => _risposta; set => _risposta = value; }
-
 
     private void Start()
     {
