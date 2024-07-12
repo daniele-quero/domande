@@ -82,17 +82,18 @@ public class DomandeManager : MonoBehaviour
         List<Domanda> domandeLogica;
         List<Domanda> domandeChimica;
 
+
         domandeBiologia = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\biologia.pdf")));
+        PdfParser.ReadPdfFile("Assets\\Resources\\biologia.pdf")));
 
         domandeCompetenze = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\competenze.pdf")));
+        PdfParser.ReadPdfFile("Assets\\Resources\\competenze.pdf")));
 
         domandeLogica = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\logica.pdf")));
+        PdfParser.ReadPdfFile("Assets\\Resources\\logica.pdf")));
 
         domandeChimica = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("C:\\Users\\dquero\\unity\\domande\\Assets\\chimica.pdf")));
+        PdfParser.ReadPdfFile("Assets\\Resources\\chimica.pdf")));
 
         _total = domandeBiologia.Count + domandeCompetenze.Count + domandeLogica.Count;
 
