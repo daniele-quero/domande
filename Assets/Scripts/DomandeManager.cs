@@ -82,18 +82,19 @@ public class DomandeManager : MonoBehaviour
         List<Domanda> domandeLogica;
         List<Domanda> domandeChimica;
 
+        Debug.Log(Application.streamingAssetsPath);
 
         domandeBiologia = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("Assets\\Resources\\biologia.pdf")));
+        PdfParser.ReadPdfFile(Application.streamingAssetsPath + "/biologia.pdf")));
 
         domandeCompetenze = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("Assets\\Resources\\competenze.pdf")));
+        PdfParser.ReadPdfFile(Application.streamingAssetsPath + "/competenze.pdf")));
 
         domandeLogica = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("Assets\\Resources\\logica.pdf")));
+        PdfParser.ReadPdfFile(Application.streamingAssetsPath + "/logica.pdf")));
 
         domandeChimica = DomandeParser.ExtractDomande(DomandeParser.ExtractDomande(
-        PdfParser.ReadPdfFile("Assets\\Resources\\chimica.pdf")));
+        PdfParser.ReadPdfFile(Application.streamingAssetsPath + "/chimica.pdf")));
 
         _total = domandeBiologia.Count + domandeCompetenze.Count + domandeLogica.Count;
 
